@@ -26,7 +26,7 @@
 		<key name="resize-width-increase" type="as"><default>['&lt;Primary&gt;Right']</default></key>
 	</schema>
 
-  	<schema id="com.github.repsac-by.quake-mode.apps">
+  	<schema id="com.initiateit.quake-mode.apps">
 		<key name="app-1" type="s"><default>''</default></key>
 		<key name="app-2" type="s"><default>''</default></key>
 		<key name="app-3" type="s"><default>''</default></key>
@@ -34,7 +34,7 @@
 		<key name="app-5" type="s"><default>''</default></key>
 	</schema>
 
-	<schema id="com.github.repsac-by.quake-mode" path="/com/github/repsac-by/quake-mode/">
+	<schema id="com.initiateit.quake-mode" path="/com/initiateit/quake-mode/">
 
 		<key name="quake-mode-app" type="s">
 			<default>''</default>
