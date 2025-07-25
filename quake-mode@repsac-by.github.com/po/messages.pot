@@ -104,3 +104,28 @@ msgstr ""
 #: quake-mode@repsac-by.github.com/indicator.js:48
 msgid "Settings"
 msgstr ""
+
+# New strings for resize functionality
+msgid "Resize Step - %"
+msgstr ""
+
+msgid "Application Toggle Shortcuts"
+msgstr ""
+
+msgid "Resize Shortcuts"
+msgstr ""
+
+msgid "Increase Height"
+msgstr ""
+
+msgid "Decrease Height"
+msgstr ""
+
+msgid "Decrease Width"
+msgstr ""
+
+msgid "Increase Width"
+msgstr ""
+
+msgid "Resize shortcuts work when a quake window is focused"
+msgstr ""

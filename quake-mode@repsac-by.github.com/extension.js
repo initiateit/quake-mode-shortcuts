@@ -58,6 +58,7 @@ export default class QuakeModeExtension extends Extension {
       this._settings.reset("quake-mode-hotkey");
     }
 
+    // Register toggle shortcuts
     for (let i = 1; i <= APPS_COUNT; i++) {
       Main.wm.addKeybinding(
         `quake-mode-accelerator-${i}`,
@@ -69,11 +70,42 @@ export default class QuakeModeExtension extends Extension {
         () => this._toggle(i),
       );
     }
+
+    // Register resize shortcuts
+    const resizeShortcuts = [
+      { key: "resize-height-increase", action: () => this._resizeHeight(1) },
+      { key: "resize-height-decrease", action: () => this._resizeHeight(-1) },
+      { key: "resize-width-decrease", action: () => this._resizeWidth(-1) },
+      { key: "resize-width-increase", action: () => this._resizeWidth(1) },
+    ];
+
+    for (const shortcut of resizeShortcuts) {
+      Main.wm.addKeybinding(
+        shortcut.key,
+        this._settings.get_child("accelerators"),
+        Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
+        Shell.ActionMode.NORMAL,
+        shortcut.action,
+      );
+    }
   }
 
   disable() {
+    // Remove toggle shortcuts
     for (let i = 1; i <= APPS_COUNT; i++) {
       Main.wm.removeKeybinding(`quake-mode-accelerator-${i}`);
+    }
+
+    // Remove resize shortcuts
+    const resizeKeys = [
+      "resize-height-increase",
+      "resize-height-decrease", 
+      "resize-width-decrease",
+      "resize-width-increase"
+    ];
+
+    for (const key of resizeKeys) {
+      Main.wm.removeKeybinding(key);
     }
 
     if (indicator) {
@@ -119,6 +151,64 @@ export default class QuakeModeExtension extends Extension {
     } catch (e) {
       Main.notify("Quake-mode", e instanceof Error ? e.message : String(e));
     }
+  }
+
+  /**
+   * Resize height of active quake app
+   * @param {number} direction - 1 for increase, -1 for decrease
+   */
+  _resizeHeight(direction) {
+    try {
+      const activeApp = this._getActiveQuakeApp();
+      if (!activeApp) return;
+
+      const currentHeight = this._settings.get_int("quake-mode-height");
+      const step = this._settings.get_int("resize-step");
+      const newHeight = Math.max(1, Math.min(100, currentHeight + (direction * step)));
+      
+      this._settings.set_int("quake-mode-height", newHeight);
+      
+      // The place() method will be called automatically due to settings change listener
+    } catch (e) {
+      Main.notify("Quake-mode", e instanceof Error ? e.message : String(e));
+    }
+  }
+
+  /**
+   * Resize width of active quake app
+   * @param {number} direction - 1 for increase, -1 for decrease
+   */
+  _resizeWidth(direction) {
+    try {
+      const activeApp = this._getActiveQuakeApp();
+      if (!activeApp) return;
+
+      const currentWidth = this._settings.get_int("quake-mode-width");
+      const step = this._settings.get_int("resize-step");
+      const newWidth = Math.max(1, Math.min(100, currentWidth + (direction * step)));
+      
+      this._settings.set_int("quake-mode-width", newWidth);
+      
+      // The place() method will be called automatically due to settings change listener
+    } catch (e) {
+      Main.notify("Quake-mode", e instanceof Error ? e.message : String(e));
+    }
+  }
+
+  /**
+   * Get the currently active quake app (visible and focused)
+   * @returns {InstanceType<typeof QuakeModeApp> | null}
+   */
+  _getActiveQuakeApp() {
+    for (const app of apps.values()) {
+      if (app.state === state.RUNNING && 
+          app.win && 
+          app.win.has_focus() && 
+          !app.win.is_hidden()) {
+        return app;
+      }
+    }
+    return null;
   }
 
   /**

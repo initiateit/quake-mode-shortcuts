@@ -143,6 +143,21 @@ const QuakeModePrefsWidget = GObject.registerClass(
       this.attach(label(_("Gap")), 0, ++r, 1, 1);
       this.attach(spinGap, 1, r, 1, 1);
 
+      // Resize Step
+      const spinResizeStep = new Gtk.SpinButton();
+      spinResizeStep.set_range(1, 20);
+      spinResizeStep.set_increments(1, 1);
+
+      settings.bind(
+        "resize-step",
+        spinResizeStep,
+        "value",
+        Gio.SettingsBindFlags.DEFAULT,
+      );
+
+      this.attach(label(_("Resize Step - %")), 0, ++r, 1, 1);
+      this.attach(spinResizeStep, 1, r, 1, 1);
+
       // Horizontal align
       {
         const key = "quake-mode-halign";
@@ -283,10 +298,10 @@ const QuakeModePrefsWidget = GObject.registerClass(
 );
 
 const AcceleratorsWidget = GObject.registerClass(
-  class AcceleratorsWidget extends Gtk.TreeView {
+  class AcceleratorsWidget extends Gtk.Box {
     /** @param {any} [params] */
     _init(params) {
-      super._init(params);
+      super._init({ orientation: Gtk.Orientation.VERTICAL, ...params });
 
       const extensionObject =
         /** @type import('@girs/gnome-shell/extensions/extension').Extension */ (
@@ -294,9 +309,19 @@ const AcceleratorsWidget = GObject.registerClass(
         );
       const settings = extensionObject.getSettings();
 
+      // Toggle Accelerators Section
+      const toggleLabel = new Gtk.Label({
+        label: "<b>" + _("Application Toggle Shortcuts") + "</b>",
+        use_markup: true,
+        halign: Gtk.Align.START,
+        margin_bottom: 10,
+      });
+      this.append(toggleLabel);
+
+      const toggleTreeView = new Gtk.TreeView();
       const Columns = { action: 0, accel: 1, app_id: 2, i: 3 };
 
-      const model = (this.model = Gtk.ListStore.new([
+      const model = (toggleTreeView.model = Gtk.ListStore.new([
         GObject.TYPE_STRING,
         GObject.TYPE_STRING,
         GObject.TYPE_STRING,
@@ -380,9 +405,9 @@ const AcceleratorsWidget = GObject.registerClass(
         },
       );
 
-      this.append_column(actions.column);
-      this.append_column(accels.column);
-      this.append_column(apps.column);
+      toggleTreeView.append_column(actions.column);
+      toggleTreeView.append_column(accels.column);
+      toggleTreeView.append_column(apps.column);
 
       accels.renderer.connect(
         "accel-edited",
@@ -446,6 +471,68 @@ const AcceleratorsWidget = GObject.registerClass(
 
         dialog.show();
       });
+
+      const scrolledWindow = new Gtk.ScrolledWindow({
+        hexpand: true,
+        vexpand: true,
+        min_content_height: 200,
+      });
+      scrolledWindow.set_child(toggleTreeView);
+      this.append(scrolledWindow);
+
+      // Resize Accelerators Section
+      const resizeLabel = new Gtk.Label({
+        label: "<b>" + _("Resize Shortcuts") + "</b>",
+        use_markup: true,
+        halign: Gtk.Align.START,
+        margin_top: 20,
+        margin_bottom: 10,
+      });
+      this.append(resizeLabel);
+
+      // Create resize shortcuts grid
+      const resizeGrid = new Gtk.Grid({
+        row_spacing: 10,
+        column_spacing: 10,
+        margin_start: 20,
+      });
+
+      const resizeShortcuts = [
+        { key: "resize-height-increase", label: _("Increase Height"), default: "Ctrl+Up" },
+        { key: "resize-height-decrease", label: _("Decrease Height"), default: "Ctrl+Down" },
+        { key: "resize-width-decrease", label: _("Decrease Width"), default: "Ctrl+Left" },
+        { key: "resize-width-increase", label: _("Increase Width"), default: "Ctrl+Right" },
+      ];
+
+      for (let i = 0; i < resizeShortcuts.length; i++) {
+        const shortcut = resizeShortcuts[i];
+        
+        const label = new Gtk.Label({
+          label: shortcut.label,
+          halign: Gtk.Align.END,
+        });
+        
+        const currentAccel = settings.get_child("accelerators").get_strv(shortcut.key)[0] || "";
+        const accelLabel = new Gtk.Label({
+          label: currentAccel || shortcut.default,
+          halign: Gtk.Align.START,
+        });
+        
+        resizeGrid.attach(label, 0, i, 1, 1);
+        resizeGrid.attach(accelLabel, 1, i, 1, 1);
+      }
+
+      this.append(resizeGrid);
+
+      // Add info label
+      const infoLabel = new Gtk.Label({
+        label: _("Resize shortcuts work when a quake window is focused"),
+        halign: Gtk.Align.START,
+        margin_top: 10,
+        wrap: true,
+      });
+      infoLabel.add_css_class("dim-label");
+      this.append(infoLabel);
     }
   },
 );
