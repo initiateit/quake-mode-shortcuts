@@ -503,8 +503,8 @@ const AcceleratorsWidget = GObject.registerClass(
         { key: "resize-height-decrease", label: _("Decrease Height"), default: "Ctrl+Down" },
         { key: "resize-width-decrease", label: _("Decrease Width"), default: "Ctrl+Left" },
         { key: "resize-width-increase", label: _("Increase Width"), default: "Ctrl+Right" },
-        { key: "switch-monitor-left", label: _("Switch Monitor Left"), default: "Ctrl+Alt+Shift+Left" },
-        { key: "switch-monitor-right", label: _("Switch Monitor Right"), default: "Ctrl+Alt+Shift+Right" },
+        { key: "switch-monitor-left", label: _("Switch Monitor Left"), default: "Ctrl+Shift+Left" },
+        { key: "switch-monitor-right", label: _("Switch Monitor Right"), default: "Ctrl+Shift+Right" },
       ];
 
       for (let i = 0; i < resizeShortcuts.length; i++) {
