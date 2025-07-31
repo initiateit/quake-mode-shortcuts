@@ -24,6 +24,9 @@
 		<key name="resize-height-decrease" type="as"><default>['&lt;Primary&gt;Down']</default></key>
 		<key name="resize-width-decrease" type="as"><default>['&lt;Primary&gt;Left']</default></key>
 		<key name="resize-width-increase" type="as"><default>['&lt;Primary&gt;Right']</default></key>
+		<!-- Monitor switching accelerators -->
+		<key name="switch-monitor-left" type="as"><default>['&lt;Primary&gt;&lt;Alt&gt;&lt;Shift&gt;Left']</default></key>
+		<key name="switch-monitor-right" type="as"><default>['&lt;Primary&gt;&lt;Alt&gt;&lt;Shift&gt;Right']</default></key>
 	</schema>
 
   	<schema id="com.initiateit.quake-mode.apps">

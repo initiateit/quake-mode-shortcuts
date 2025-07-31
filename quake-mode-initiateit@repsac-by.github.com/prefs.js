@@ -321,12 +321,13 @@ const AcceleratorsWidget = GObject.registerClass(
       const toggleTreeView = new Gtk.TreeView();
       const Columns = { action: 0, accel: 1, app_id: 2, i: 3 };
 
-      const model = (toggleTreeView.model = Gtk.ListStore.new([
+      const model = Gtk.ListStore.new([
         GObject.TYPE_STRING,
         GObject.TYPE_STRING,
         GObject.TYPE_STRING,
         GObject.TYPE_INT,
-      ]));
+      ]);
+      toggleTreeView.set_model(model);
 
       /** @type {(row: [any, string, number]) => void}} */
       function add_row([accelerator, app_id, i]) {
@@ -502,6 +503,8 @@ const AcceleratorsWidget = GObject.registerClass(
         { key: "resize-height-decrease", label: _("Decrease Height"), default: "Ctrl+Down" },
         { key: "resize-width-decrease", label: _("Decrease Width"), default: "Ctrl+Left" },
         { key: "resize-width-increase", label: _("Increase Width"), default: "Ctrl+Right" },
+        { key: "switch-monitor-left", label: _("Switch Monitor Left"), default: "Ctrl+Alt+Shift+Left" },
+        { key: "switch-monitor-right", label: _("Switch Monitor Right"), default: "Ctrl+Alt+Shift+Right" },
       ];
 
       for (let i = 0; i < resizeShortcuts.length; i++) {

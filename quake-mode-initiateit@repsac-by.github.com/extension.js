@@ -88,6 +88,23 @@ export default class QuakeModeExtension extends Extension {
         shortcut.action,
       );
     }
+
+    // Register monitor switching shortcuts
+    Main.wm.addKeybinding(
+      "switch-monitor-left",
+      this._settings.get_child("accelerators"),
+      Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
+      Shell.ActionMode.NORMAL,
+      () => this._switchMonitor(-1),
+    );
+    
+    Main.wm.addKeybinding(
+      "switch-monitor-right",
+      this._settings.get_child("accelerators"),
+      Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
+      Shell.ActionMode.NORMAL,
+      () => this._switchMonitor(1),
+    );
   }
 
   disable() {
@@ -107,6 +124,10 @@ export default class QuakeModeExtension extends Extension {
     for (const key of resizeKeys) {
       Main.wm.removeKeybinding(key);
     }
+
+    // Remove monitor switching shortcuts
+    Main.wm.removeKeybinding("switch-monitor-left");
+    Main.wm.removeKeybinding("switch-monitor-right");
 
     if (indicator) {
       indicator.destroy();
@@ -209,6 +230,34 @@ export default class QuakeModeExtension extends Extension {
       }
     }
     return null;
+  }
+
+  /**
+   * Switch quake terminal to a monitor in the specified direction
+   * @param {number} direction - 1 for right/next, -1 for left/previous
+   */
+  _switchMonitor(direction) {
+    try {
+      const totalMonitors = global.display.get_n_monitors();
+      if (totalMonitors <= 1) return; // No point switching if only one monitor
+
+      const currentMonitor = this._settings.get_int("quake-mode-monitor");
+      let nextMonitor;
+      
+      if (direction > 0) {
+        // Switch right/next
+        nextMonitor = (currentMonitor + 1) % totalMonitors;
+      } else {
+        // Switch left/previous
+        nextMonitor = (currentMonitor - 1 + totalMonitors) % totalMonitors;
+      }
+      
+      this._settings.set_int("quake-mode-monitor", nextMonitor);
+      
+      // The place() method will be called automatically for all apps due to settings change listener
+    } catch (e) {
+      Main.notify("Quake-mode", e instanceof Error ? e.message : String(e));
+    }
   }
 
   /**
