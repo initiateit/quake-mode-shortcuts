@@ -24,7 +24,7 @@ This fork adds keyboard shortcuts to resize and move the quake-mode window:
 - **Ctrl + Down**: Decrease window height  
 - **Ctrl + Right**: Increase window width  
 - **Ctrl + Left**: Decrease window width  
-- **Ctrl + Alt + Shift + Left/Right**: Move the window to the previous or next monitor
+- **Ctrl + Alt + Left/Right**: Move the window to the previous or next monitor
 
 ## Known Issues
 
