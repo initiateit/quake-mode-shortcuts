@@ -8,13 +8,13 @@ https://github.com/user-attachments/assets/e01159d2-7292-411e-a851-8aa5727086f5
 ## Installation
 
 ```bash
-git clone https://github.com/repsac-by/gnome-shell-extension-quake-mode.git
+git clone https://github.com/initiateit/quake-mode-shortcuts.git
 
-cd gnome-shell-extension-quake-mode
+cd quake-mode-shortcuts
 
-gnome-extensions pack quake-mode@repsac-by.github.com --extra-source={quakemodeapp,indicator,util}.js
+gnome-extensions pack quake-mode-initiateit@repsac-by.github.com --extra-source={quakemodeapp,indicator,util}.js
 
-gnome-extensions install quake-mode@repsac-by.github.com.shell-extension.zip
+gnome-extensions install quake-mode-initiateit@repsac-by.github.com.zip
 ```
 
 ## Usage
