@@ -1,6 +1,8 @@
 # It's a GNOME Shell extension adds support quake-mode for any application
 
-[![Watch the video](media/quake-mode-shortcuts.png)](media/quake-mode-shortcuts.mp4)'
+
+https://github.com/user-attachments/assets/e01159d2-7292-411e-a851-8aa5727086f5
+
 
 
 ## Installation
