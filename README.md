@@ -14,12 +14,22 @@ gnome-extensions install quake-mode@repsac-by.github.com.shell-extension.zip
 
 ## Usage
 
-Go to gnome extensions or extension manager and open the settings for quake-mode. Switch over to the accelerators tab and define a shortcut key and an application it should open. Use that key to toggle the application like a quake shell.
+Go to GNOME Extensions or Extension Manager and open the settings for quake-mode. Switch over to the accelerators tab and define a shortcut key and an application it should open. Use that key to toggle quake-mode for your chosen app.
 
-## Know issues
+### Window Resize & Monitor Shortcuts
 
-Due to the implementation of some tricks of initial placement of the window in the desired location on the screen and suppression of the initial animation with replacement of its own, it may not always work correctly.
+This fork adds keyboard shortcuts to resize and move the quake-mode window:
+
+- **Ctrl + Up**: Increase window height  
+- **Ctrl + Down**: Decrease window height  
+- **Ctrl + Right**: Increase window width  
+- **Ctrl + Left**: Decrease window width  
+- **Ctrl + Alt + Shift + Left/Right**: Move the window to the previous or next monitor
+
+## Known Issues
+
+Due to the implementation of some tricks of initial placement of the window in the desired location on the screen and suppression of the initial animation with replacement of its own, it may not always work as expected.
 
 ## P.S.
 
-Developed for usage [tilix](https://github.com/gnunn1/tilix) on wayland but can manage almost any application.
+Developed for usage with [tilix](https://github.com/gnunn1/tilix) on Wayland but can manage almost any application.
