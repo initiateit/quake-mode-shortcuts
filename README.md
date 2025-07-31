@@ -1,4 +1,4 @@
-# It's a GNOME Shell extension adds support quake-mode for any application
+# Quake Mode Gnome Shell Extension
 
 
 https://github.com/user-attachments/assets/e01159d2-7292-411e-a851-8aa5727086f5
