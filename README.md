@@ -1,9 +1,7 @@
 # Quake Mode Gnome Shell Extension
-
+A fork from the awesome [repsac-by](https://github.com/repsac-by) and their [gnome-shell-extension-quake-mode](https://github.com/repsac-by/gnome-shell-extension-quake-mode) to add more features.
 
 https://github.com/user-attachments/assets/e01159d2-7292-411e-a851-8aa5727086f5
-
-
 
 ## Installation
 
