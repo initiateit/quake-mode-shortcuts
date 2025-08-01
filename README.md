@@ -31,6 +31,8 @@ This fork adds keyboard shortcuts to resize and move the quake-mode window:
 - **Ctrl + Left**: Decrease window width  
 - **Ctrl + Shift + Left/Right**: Move the window to the previous or next monitor
 
+Also adds the ability to vertically center the starting position of the app.
+
 ## Known Issues
 
 Due to the implementation of some tricks of initial placement of the window in the desired location on the screen and suppression of the initial animation with replacement of its own, it may not always work as expected.
