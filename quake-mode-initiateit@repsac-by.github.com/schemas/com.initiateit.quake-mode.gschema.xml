@@ -11,6 +11,7 @@
 	<enum id="com.initiateit.quake-mode.valignment">
 		<value nick="top" value="0" />
 		<value nick="bottom" value="1" />
+		<value nick="center" value="2" />
 	</enum>
 
   	<schema id="com.initiateit.quake-mode.accelerators">

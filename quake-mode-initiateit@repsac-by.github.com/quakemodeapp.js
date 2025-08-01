@@ -116,7 +116,9 @@ export var QuakeModeApp = class {
   }
 
   get valign() {
-    return this.settings.get_string("quake-mode-valign");
+    return /** @type {"top" | "bottom" | "center"} */ (
+      this.settings.get_string("quake-mode-valign")
+    );
   }
 
   get monitor() {
@@ -225,7 +227,7 @@ export var QuakeModeApp = class {
     this.isTransition = true;
 
     parent.set_child_above_sibling(child, null);
-    (child.translation_y = child.height * (valign === "top" ? -1 : 2)),
+    (child.translation_y = child.height * (valign === "top" ? -1 : valign === "center" ? 0 : 2)),
       //@ts-expect-error Missing type. TODO: contribute to @girs
       Main.wm.skipNextEffect(child);
     Main.activateWindow(child.meta_window);
@@ -258,7 +260,7 @@ export var QuakeModeApp = class {
 
     //@ts-expect-error
     child.ease({
-      translation_y: child.height * (valign === "top" ? -1 : 2),
+      translation_y: child.height * (valign === "top" ? -1 : valign === "center" ? 0 : 2),
       duration: this.ainmation_time,
       mode: Clutter.AnimationMode.EASE_IN_QUART,
       onComplete: () => {
@@ -285,7 +287,7 @@ export var QuakeModeApp = class {
           (area.width - w) * { left: 0, center: 0.5, right: 1 }[halign] +
             { left: gap, center: 0, right: -gap }[halign],
         ),
-      y = area.y + (valign === "top" ? gap : area.height - h - gap);
+      y = area.y + (valign === "top" ? gap : valign === "center" ? Math.round((area.height - h) / 2) : area.height - h - gap);
 
     win.move_to_monitor(monitor);
     win.move_resize_frame(false, x, y, w, h);

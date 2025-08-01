@@ -202,6 +202,7 @@ const QuakeModePrefsWidget = GObject.registerClass(
         const items = [
           { label: _("Top"), value: "top" },
           { label: _("Bottom"), value: "bottom" },
+          { label: _("Center"), value: "center" },
         ];
 
         const model = new Gtk.ListStore();
