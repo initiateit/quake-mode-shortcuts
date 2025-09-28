@@ -34,7 +34,5 @@ Also adds the ability to vertically center the starting position of the app.
 ## Known Issues
 
 Due to the implementation of some tricks of initial placement of the window in the desired location on the screen and suppression of the initial animation with replacement of its own, it may not always work as expected.
+Things may animate a little fudgey or glitchy.
 
-## P.S.
-
-Developed for usage with [tilix](https://github.com/gnunn1/tilix) on Wayland but can manage almost any application.
