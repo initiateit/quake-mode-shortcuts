@@ -2,8 +2,8 @@
   "name": "quake-mode",
   "description": "Drop-down mode with shortcuts",
   "uuid": "quake-mode-initiateit@repsac-by.github.com",
-  "shell-version": ["45", "46", "47", "48"],
-  "version": 10,
+  "shell-version": ["45", "46", "47", "48", "49"],
+  "version": 11,
   "url": "https://github.com/initiateit/quake-mode-shortcuts",
   "settings-schema": "com.initiateit.quake-mode",
   "gettext-domain": "quake-mode-initiateit@repsac-by.github.com"

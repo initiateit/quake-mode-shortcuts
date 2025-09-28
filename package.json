@@ -11,12 +11,12 @@
   "author": "repsac-by",
   "license": "MIT",
   "devDependencies": {
-    "@girs/gio-2.0": "^2.78.0-3.2.6",
-    "@girs/gnome-shell": "^45.0.0-beta5",
-    "@girs/gobject-2.0": "^2.78.0-3.2.6",
-    "@girs/gtk-4.0": "^4.12.3-3.2.6",
-    "eslint": "^8.55.0",
-    "prettier": "^3.1.0",
-    "typescript": "^5.3.2"
+    "@girs/gio-2.0": "^2.86.0-4.0.0-beta.38",
+    "@girs/gnome-shell": "^49.0.1",
+    "@girs/gobject-2.0": "^2.86.0-4.0.0-beta.38",
+    "@girs/gtk-4.0": "^4.20.1-4.0.0-beta.38",
+    "eslint": "^9.36.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
   }
 }
