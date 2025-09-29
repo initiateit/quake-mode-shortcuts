@@ -12,7 +12,7 @@ cd quake-mode-shortcuts
 
 gnome-extensions pack quake-mode-initiateit@repsac-by.github.com --extra-source={quakemodeapp,indicator,util}.js
 
-gnome-extensions install quake-mode-initiateit@repsac-by.github.com.zip
+gnome-extensions install quake-mode-initiateit@repsac-by.github.com.shell-extension.zip
 ```
 
 ## Usage
