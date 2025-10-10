@@ -16,10 +16,12 @@ export var state = {
 export var QuakeModeApp = class {
   /**
    * @param {string} app_id
+   * @param {number} app_index - The app slot number (1-5)
    */
-  constructor(app_id) {
+  constructor(app_id, app_index) {
     this.isTransition = false;
     this.state = state.INITIAL;
+    this.app_index = app_index;
 
     /** @type {import('@girs/meta-13').Meta.Window?} */
     this.win = null;
@@ -40,6 +42,7 @@ export var QuakeModeApp = class {
         Extension.lookupByURL(import.meta.url)
       );
     const settings = (this.settings = extensionObject.getSettings());
+    this.appSettings = settings.get_child("apps");
 
     settings.connect("changed::quake-mode-width", place);
     settings.connect("changed::quake-mode-height", place);
@@ -48,6 +51,12 @@ export var QuakeModeApp = class {
     settings.connect("changed::quake-mode-valign", place);
     settings.connect("changed::quake-mode-monitor", place);
     settings.connect("changed::quake-mode-always-on-top", setupAlwaysOnTop);
+
+    // Listen for per-app alignment and size changes
+    this.appSettings.connect(`changed::app-${app_index}-valign`, place);
+    this.appSettings.connect(`changed::app-${app_index}-halign`, place);
+    this.appSettings.connect(`changed::app-${app_index}-width`, place);
+    this.appSettings.connect(`changed::app-${app_index}-height`, place);
 
     this.state = state.READY;
   }
@@ -86,10 +95,22 @@ export var QuakeModeApp = class {
   }
 
   get width() {
+    // Check for per-app width setting first
+    const appWidth = this.appSettings.get_int(`app-${this.app_index}-width`);
+    if (appWidth > 0) {
+      return appWidth;
+    }
+    // Fall back to global setting
     return this.settings.get_int("quake-mode-width");
   }
 
   get height() {
+    // Check for per-app height setting first
+    const appHeight = this.appSettings.get_int(`app-${this.app_index}-height`);
+    if (appHeight > 0) {
+      return appHeight;
+    }
+    // Fall back to global setting
     return this.settings.get_int("quake-mode-height");
   }
 
@@ -110,12 +131,24 @@ export var QuakeModeApp = class {
   }
 
   get halign() {
+    // Check for per-app halign setting first
+    const appHalign = this.appSettings.get_string(`app-${this.app_index}-halign`);
+    if (appHalign) {
+      return /** @type {"left" | "center" | "right"} */ (appHalign);
+    }
+    // Fall back to global setting
     return /** @type {"left" | "center" | "right"} */ (
       this.settings.get_string("quake-mode-halign")
     );
   }
 
   get valign() {
+    // Check for per-app valign setting first
+    const appValign = this.appSettings.get_string(`app-${this.app_index}-valign`);
+    if (appValign) {
+      return /** @type {"top" | "bottom" | "center"} */ (appValign);
+    }
+    // Fall back to global setting
     return /** @type {"top" | "bottom" | "center"} */ (
       this.settings.get_string("quake-mode-valign")
     );

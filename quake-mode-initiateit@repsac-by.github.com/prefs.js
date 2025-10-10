@@ -320,9 +320,11 @@ const AcceleratorsWidget = GObject.registerClass(
       this.append(toggleLabel);
 
       const toggleTreeView = new Gtk.TreeView();
-      const Columns = { action: 0, accel: 1, app_id: 2, i: 3 };
+      const Columns = { action: 0, accel: 1, app_id: 2, valign: 3, halign: 4, i: 5 };
 
       const model = Gtk.ListStore.new([
+        GObject.TYPE_STRING,
+        GObject.TYPE_STRING,
         GObject.TYPE_STRING,
         GObject.TYPE_STRING,
         GObject.TYPE_STRING,
@@ -330,12 +332,12 @@ const AcceleratorsWidget = GObject.registerClass(
       ]);
       toggleTreeView.set_model(model);
 
-      /** @type {(row: [any, string, number]) => void}} */
-      function add_row([accelerator, app_id, i]) {
+      /** @type {(row: [any, string, string, string, number]) => void}} */
+      function add_row([accelerator, app_id, valign, halign, i]) {
         model.set(
           model.append(),
-          [0, 1, 2, 3],
-          [_("Toggle"), accelerator, app_id, i],
+          [0, 1, 2, 3, 4, 5],
+          [_("Toggle"), accelerator, app_id, valign, halign, i],
         );
       }
 
@@ -346,6 +348,10 @@ const AcceleratorsWidget = GObject.registerClass(
             .get_strv(`quake-mode-accelerator-${i}`)[0] || "",
           //@ts-expect-error
           settings.get_child("apps").get_string(`app-${i}`),
+          //@ts-expect-error
+          settings.get_child("apps").get_string(`app-${i}-valign`) || "top",
+          //@ts-expect-error
+          settings.get_child("apps").get_string(`app-${i}-halign`) || "center",
           i,
         ]);
       }
@@ -371,9 +377,27 @@ const AcceleratorsWidget = GObject.registerClass(
         renderer: new Gtk.CellRendererText({ editable: true }),
       };
 
+      const valigns = {
+        column: new Gtk.TreeViewColumn({
+          title: _("Direction"),
+          min_width: 100,
+        }),
+        renderer: new Gtk.CellRendererText({ editable: true }),
+      };
+
+      const haligns = {
+        column: new Gtk.TreeViewColumn({
+          title: _("H-Align"),
+          min_width: 100,
+        }),
+        renderer: new Gtk.CellRendererText({ editable: true }),
+      };
+
       actions.column.pack_start(actions.renderer, true);
       accels.column.pack_start(accels.renderer, true);
       apps.column.pack_start(apps.renderer, true);
+      valigns.column.pack_start(valigns.renderer, true);
+      haligns.column.pack_start(haligns.renderer, true);
 
       actions.column.set_cell_data_func(
         actions.renderer,
@@ -407,9 +431,27 @@ const AcceleratorsWidget = GObject.registerClass(
         },
       );
 
+      valigns.column.set_cell_data_func(
+        valigns.renderer,
+        (column, cell, model, iter) => {
+          //@ts-expect-error
+          cell.text = model.get_value(iter, Columns.valign) || "top";
+        },
+      );
+
+      haligns.column.set_cell_data_func(
+        haligns.renderer,
+        (column, cell, model, iter) => {
+          //@ts-expect-error
+          cell.text = model.get_value(iter, Columns.halign) || "center";
+        },
+      );
+
       toggleTreeView.append_column(actions.column);
       toggleTreeView.append_column(accels.column);
       toggleTreeView.append_column(apps.column);
+      toggleTreeView.append_column(valigns.column);
+      toggleTreeView.append_column(haligns.column);
 
       accels.renderer.connect(
         "accel-edited",
@@ -474,6 +516,30 @@ const AcceleratorsWidget = GObject.registerClass(
         dialog.show();
       });
 
+      valigns.renderer.connect("edited", (renderer, path, new_text) => {
+        const validValues = ["top", "bottom", "center"];
+        if (!validValues.includes(new_text)) return;
+
+        const [ok, iter] = model.get_iter(Gtk.TreePath.new_from_string(path));
+        if (ok) {
+          model.set(iter, [Columns.valign], [new_text]);
+          const i = model.get_value(iter, Columns.i);
+          settings.get_child("apps").set_string(`app-${i}-valign`, new_text);
+        }
+      });
+
+      haligns.renderer.connect("edited", (renderer, path, new_text) => {
+        const validValues = ["left", "center", "right"];
+        if (!validValues.includes(new_text)) return;
+
+        const [ok, iter] = model.get_iter(Gtk.TreePath.new_from_string(path));
+        if (ok) {
+          model.set(iter, [Columns.halign], [new_text]);
+          const i = model.get_value(iter, Columns.i);
+          settings.get_child("apps").set_string(`app-${i}-halign`, new_text);
+        }
+      });
+
       const scrolledWindow = new Gtk.ScrolledWindow({
         hexpand: true,
         vexpand: true,
@@ -481,6 +547,16 @@ const AcceleratorsWidget = GObject.registerClass(
       });
       scrolledWindow.set_child(toggleTreeView);
       this.append(scrolledWindow);
+
+      // Add info label for direction/alignment settings
+      const directionInfoLabel = new Gtk.Label({
+        label: _("Direction: top, bottom, or center (animation direction)\nH-Align: left, center, or right (horizontal position)"),
+        halign: Gtk.Align.START,
+        margin_top: 5,
+        wrap: true,
+      });
+      directionInfoLabel.add_css_class("dim-label");
+      this.append(directionInfoLabel);
 
       // Resize Accelerators Section
       const resizeLabel = new Gtk.Label({

@@ -164,7 +164,7 @@ export default class QuakeModeExtension extends Extension {
     try {
       let app = apps.get(i);
       if (!app || app.state === state.DEAD) {
-        app = new QuakeModeApp(this._app_id(i));
+        app = new QuakeModeApp(this._app_id(i), i);
         apps.set(i, app);
       }
 
@@ -180,15 +180,24 @@ export default class QuakeModeExtension extends Extension {
    */
   _resizeHeight(direction) {
     try {
-      const activeApp = this._getActiveQuakeApp();
-      if (!activeApp) return;
+      const activeAppInfo = this._getActiveQuakeApp();
+      if (!activeAppInfo) return;
 
-      const currentHeight = this._settings.get_int("quake-mode-height");
+      const { app, index } = activeAppInfo;
+      const appsSettings = this._settings.get_child("apps");
       const step = this._settings.get_int("resize-step");
+
+      // Get current height (per-app or global)
+      let currentHeight = appsSettings.get_int(`app-${index}-height`);
+      if (currentHeight === 0) {
+        currentHeight = this._settings.get_int("quake-mode-height");
+      }
+
       const newHeight = Math.max(1, Math.min(100, currentHeight + (direction * step)));
-      
-      this._settings.set_int("quake-mode-height", newHeight);
-      
+
+      // Set per-app height
+      appsSettings.set_int(`app-${index}-height`, newHeight);
+
       // The place() method will be called automatically due to settings change listener
     } catch (e) {
       Main.notify("Quake-mode", e instanceof Error ? e.message : String(e));
@@ -201,15 +210,24 @@ export default class QuakeModeExtension extends Extension {
    */
   _resizeWidth(direction) {
     try {
-      const activeApp = this._getActiveQuakeApp();
-      if (!activeApp) return;
+      const activeAppInfo = this._getActiveQuakeApp();
+      if (!activeAppInfo) return;
 
-      const currentWidth = this._settings.get_int("quake-mode-width");
+      const { app, index } = activeAppInfo;
+      const appsSettings = this._settings.get_child("apps");
       const step = this._settings.get_int("resize-step");
+
+      // Get current width (per-app or global)
+      let currentWidth = appsSettings.get_int(`app-${index}-width`);
+      if (currentWidth === 0) {
+        currentWidth = this._settings.get_int("quake-mode-width");
+      }
+
       const newWidth = Math.max(1, Math.min(100, currentWidth + (direction * step)));
-      
-      this._settings.set_int("quake-mode-width", newWidth);
-      
+
+      // Set per-app width
+      appsSettings.set_int(`app-${index}-width`, newWidth);
+
       // The place() method will be called automatically due to settings change listener
     } catch (e) {
       Main.notify("Quake-mode", e instanceof Error ? e.message : String(e));
@@ -218,15 +236,15 @@ export default class QuakeModeExtension extends Extension {
 
   /**
    * Get the currently active quake app (visible and focused)
-   * @returns {InstanceType<typeof QuakeModeApp> | null}
+   * @returns {{app: InstanceType<typeof QuakeModeApp>, index: number} | null}
    */
   _getActiveQuakeApp() {
-    for (const app of apps.values()) {
-      if (app.state === state.RUNNING && 
-          app.win && 
-          app.win.has_focus() && 
+    for (const [index, app] of apps.entries()) {
+      if (app.state === state.RUNNING &&
+          app.win &&
+          app.win.has_focus() &&
           !app.win.is_hidden()) {
-        return app;
+        return { app, index };
       }
     }
     return null;

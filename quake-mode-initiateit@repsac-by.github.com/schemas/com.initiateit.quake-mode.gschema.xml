@@ -36,6 +36,30 @@
 		<key name="app-3" type="s"><default>''</default></key>
 		<key name="app-4" type="s"><default>''</default></key>
 		<key name="app-5" type="s"><default>''</default></key>
+		<!-- Per-app vertical alignment (animation direction) -->
+		<key name="app-1-valign" enum="com.initiateit.quake-mode.valignment"><default>'top'</default></key>
+		<key name="app-2-valign" enum="com.initiateit.quake-mode.valignment"><default>'top'</default></key>
+		<key name="app-3-valign" enum="com.initiateit.quake-mode.valignment"><default>'top'</default></key>
+		<key name="app-4-valign" enum="com.initiateit.quake-mode.valignment"><default>'top'</default></key>
+		<key name="app-5-valign" enum="com.initiateit.quake-mode.valignment"><default>'top'</default></key>
+		<!-- Per-app horizontal alignment -->
+		<key name="app-1-halign" enum="com.initiateit.quake-mode.halignment"><default>'center'</default></key>
+		<key name="app-2-halign" enum="com.initiateit.quake-mode.halignment"><default>'center'</default></key>
+		<key name="app-3-halign" enum="com.initiateit.quake-mode.halignment"><default>'center'</default></key>
+		<key name="app-4-halign" enum="com.initiateit.quake-mode.halignment"><default>'center'</default></key>
+		<key name="app-5-halign" enum="com.initiateit.quake-mode.halignment"><default>'center'</default></key>
+		<!-- Per-app width (0 means use global setting) -->
+		<key name="app-1-width" type="i"><range min="0" max="100"/><default>0</default></key>
+		<key name="app-2-width" type="i"><range min="0" max="100"/><default>0</default></key>
+		<key name="app-3-width" type="i"><range min="0" max="100"/><default>0</default></key>
+		<key name="app-4-width" type="i"><range min="0" max="100"/><default>0</default></key>
+		<key name="app-5-width" type="i"><range min="0" max="100"/><default>0</default></key>
+		<!-- Per-app height (0 means use global setting) -->
+		<key name="app-1-height" type="i"><range min="0" max="100"/><default>0</default></key>
+		<key name="app-2-height" type="i"><range min="0" max="100"/><default>0</default></key>
+		<key name="app-3-height" type="i"><range min="0" max="100"/><default>0</default></key>
+		<key name="app-4-height" type="i"><range min="0" max="100"/><default>0</default></key>
+		<key name="app-5-height" type="i"><range min="0" max="100"/><default>0</default></key>
 	</schema>
 
 	<schema id="com.initiateit.quake-mode" path="/com/initiateit/quake-mode/">
