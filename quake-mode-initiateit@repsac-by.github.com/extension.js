@@ -60,15 +60,21 @@ export default class QuakeModeExtension extends Extension {
 
     // Register toggle shortcuts
     for (let i = 1; i <= APPS_COUNT; i++) {
-      Main.wm.addKeybinding(
-        `quake-mode-accelerator-${i}`,
-        this._settings.get_child("accelerators"),
-        Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
-        Shell.ActionMode.NORMAL |
-          Shell.ActionMode.OVERVIEW |
-          Shell.ActionMode.POPUP,
-        () => this._toggle(i),
-      );
+      const acceleratorKey = `quake-mode-accelerator-${i}`;
+      const accelerators = this._settings.get_child("accelerators").get_strv(acceleratorKey);
+
+      // Only register if accelerator is actually set (not empty)
+      if (accelerators.length > 0 && accelerators[0] !== '') {
+        Main.wm.addKeybinding(
+          acceleratorKey,
+          this._settings.get_child("accelerators"),
+          Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
+          Shell.ActionMode.NORMAL |
+            Shell.ActionMode.OVERVIEW |
+            Shell.ActionMode.POPUP,
+          () => this._toggle(i),
+        );
+      }
     }
 
     // Register resize shortcuts

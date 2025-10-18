@@ -44,19 +44,23 @@ export var QuakeModeApp = class {
     const settings = (this.settings = extensionObject.getSettings());
     this.appSettings = settings.get_child("apps");
 
-    settings.connect("changed::quake-mode-width", place);
-    settings.connect("changed::quake-mode-height", place);
-    settings.connect("changed::quake-mode-gap", place);
-    settings.connect("changed::quake-mode-halign", place);
-    settings.connect("changed::quake-mode-valign", place);
-    settings.connect("changed::quake-mode-monitor", place);
-    settings.connect("changed::quake-mode-always-on-top", setupAlwaysOnTop);
+    // Store signal IDs for proper cleanup
+    this.signalIds = [];
+
+    this.signalIds.push(settings.connect("changed::quake-mode-width", place));
+    this.signalIds.push(settings.connect("changed::quake-mode-height", place));
+    this.signalIds.push(settings.connect("changed::quake-mode-gap", place));
+    this.signalIds.push(settings.connect("changed::quake-mode-halign", place));
+    this.signalIds.push(settings.connect("changed::quake-mode-valign", place));
+    this.signalIds.push(settings.connect("changed::quake-mode-monitor", place));
+    this.signalIds.push(settings.connect("changed::quake-mode-always-on-top", setupAlwaysOnTop));
 
     // Listen for per-app alignment and size changes
-    this.appSettings.connect(`changed::app-${app_index}-valign`, place);
-    this.appSettings.connect(`changed::app-${app_index}-halign`, place);
-    this.appSettings.connect(`changed::app-${app_index}-width`, place);
-    this.appSettings.connect(`changed::app-${app_index}-height`, place);
+    this.appSignalIds = [];
+    this.appSignalIds.push(this.appSettings.connect(`changed::app-${app_index}-valign`, place));
+    this.appSignalIds.push(this.appSettings.connect(`changed::app-${app_index}-halign`, place));
+    this.appSignalIds.push(this.appSettings.connect(`changed::app-${app_index}-width`, place));
+    this.appSignalIds.push(this.appSettings.connect(`changed::app-${app_index}-height`, place));
 
     this.state = state.READY;
   }
@@ -64,8 +68,28 @@ export var QuakeModeApp = class {
   destroy() {
     this.state = state.DEAD;
 
+    // Disconnect all signal handlers before disposing settings
+    if (this.settings && this.signalIds) {
+      for (const id of this.signalIds) {
+        this.settings.disconnect(id);
+      }
+      this.signalIds = [];
+    }
+
+    if (this.appSettings && this.appSignalIds) {
+      for (const id of this.appSignalIds) {
+        this.appSettings.disconnect(id);
+      }
+      this.appSignalIds = [];
+    }
+
     if (this.settings) {
       this.settings.run_dispose();
+      this.settings = null;
+    }
+
+    if (this.appSettings) {
+      this.appSettings = null;
     }
 
     this.win = null;
@@ -170,15 +194,43 @@ export var QuakeModeApp = class {
   }
 
   toggle() {
-    const { win } = this;
+    const { win, app } = this;
 
-    if (this.state === state.READY)
-      return this.launch()
-        .then(() => this.first_place())
-        .catch((e) => {
-          this.destroy();
-          throw e;
-        });
+    if (this.state === state.READY) {
+      // Check if app already has windows before trying to launch
+      if (app && app.get_n_windows() > 0) {
+        // App is already running, attach to existing window
+        this.win = app.get_windows()[0];
+        this.state = state.RUNNING;
+        this.setupAlwaysOnTop(this.alwaysOnTop);
+        once(this.win, "unmanaged", () => this.destroy());
+
+        // Make sure window is on all workspaces and positioned correctly
+        this.win.stick();
+        this.place();
+
+        // Unminimize if needed and show
+        if (this.win.minimized || this.win.is_hidden()) {
+          this.win.unminimize();
+          this.win.activate(global.get_current_time());
+        }
+
+        // Toggle the already-running window
+        if (this.win.has_focus()) {
+          return this.hide();
+        } else {
+          Main.activateWindow(this.win);
+        }
+      } else {
+        // No existing windows, launch normally
+        return this.launch()
+          .then(() => this.first_place())
+          .catch((e) => {
+            this.destroy();
+            throw e;
+          });
+      }
+    }
 
     if (this.state !== state.RUNNING || !win) return;
 
